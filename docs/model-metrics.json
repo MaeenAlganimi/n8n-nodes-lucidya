@@ -1,0 +1,66 @@
+{
+  "evaluatedAt": "2026-06-15T12:00:00.000Z",
+  "historyDays": 80,
+  "holdoutDays": 14,
+  "seed": 20261010,
+  "areas": 25,
+  "trainHours": 35400,
+  "testHours": 8400,
+  "positiveRate": {
+    "train": 0.2087,
+    "test": 0.2124
+  },
+  "constant": {
+    "brier": 0.1673
+  },
+  "baseline": {
+    "brier": 0.1379,
+    "auc": 0.7398
+  },
+  "logistic": {
+    "brier": 0.1331,
+    "auc": 0.7522
+  },
+  "skillVsConstant": {
+    "baseline": 0.1755,
+    "logistic": 0.2046
+  },
+  "calibration": [
+    {
+      "from": 0,
+      "to": 0.2,
+      "count": 5691,
+      "predicted": 0.107,
+      "observed": 0.111
+    },
+    {
+      "from": 0.2,
+      "to": 0.4,
+      "count": 1418,
+      "predicted": 0.279,
+      "observed": 0.269
+    },
+    {
+      "from": 0.4,
+      "to": 0.6,
+      "count": 659,
+      "predicted": 0.5,
+      "observed": 0.473
+    },
+    {
+      "from": 0.6,
+      "to": 0.8,
+      "count": 457,
+      "predicted": 0.689,
+      "observed": 0.652
+    },
+    {
+      "from": 0.8,
+      "to": 1,
+      "count": 175,
+      "predicted": 0.839,
+      "observed": 0.909
+    }
+  ],
+  "note": "Synthetic history with a time-based holdout. The last 14 days are scored; they are not used to fit either model."
+}

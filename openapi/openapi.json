@@ -1,0 +1,153 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Barq",
+    "version": "1.0.0",
+    "description": "Read neighbourhood power outages, recent history, and 24-hour probabilities. POST a report to say the power is off or back. Two different reporters within 60 minutes confirm a change. Demo servers are seeded with synthetic history; the synthetic flag on an outage says so."
+  },
+  "servers": [{ "url": "/" }],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Process health",
+        "description": "Returns ok, whether this process is in demo mode, and whether the database is labelled synthetic.",
+        "responses": { "200": { "description": "Health" } }
+      }
+    },
+    "/api/areas": {
+      "get": {
+        "summary": "List neighbourhoods",
+        "description": "Country, city, and neighbourhood names. Pass lang=ar for Arabic names. Coordinates are approximate centroids.",
+        "parameters": [
+          { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "ar"] } }
+        ],
+        "responses": { "200": { "description": "Area list" } }
+      }
+    },
+    "/api/areas/{id}": {
+      "get": {
+        "summary": "One neighbourhood",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "ar"] } }
+        ],
+        "responses": {
+          "200": { "description": "Area" },
+          "404": { "description": "Unknown area" }
+        }
+      }
+    },
+    "/api/outages": {
+      "get": {
+        "summary": "Outage records",
+        "description": "status=active returns confirmed and unconfirmed outages. status=recent returns records that started in the last 21 days. synthetic is true for generated demo history.",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["active", "recent", "all"] }
+          },
+          { "name": "areaId", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Outages" } }
+      }
+    },
+    "/api/areas/{id}/timeline": {
+      "get": {
+        "summary": "Outage timeline for one neighbourhood",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "days", "in": "query", "schema": { "type": "integer", "default": 21, "maximum": 120 } }
+        ],
+        "responses": {
+          "200": { "description": "Timeline" },
+          "404": { "description": "Unknown area" }
+        }
+      }
+    },
+    "/api/areas/{id}/stats": {
+      "get": {
+        "summary": "Hours without power",
+        "description": "Counts confirmed outage hours in the local timezone of the neighbourhood.",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "days", "in": "query", "schema": { "type": "integer", "default": 7, "maximum": 60 } }
+        ],
+        "responses": {
+          "200": { "description": "Stats" },
+          "404": { "description": "Unknown area" }
+        }
+      }
+    },
+    "/api/areas/{id}/predictions": {
+      "get": {
+        "summary": "Next 24 hourly probabilities",
+        "description": "Each slot has the logistic probability, the hour-of-week baseline, and log-odds contributions from the main feature groups. temperatureSource is open-meteo or climatology.",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Forecast" },
+          "404": { "description": "Unknown area" }
+        }
+      }
+    },
+    "/api/reports": {
+      "post": {
+        "summary": "Report power off or power back",
+        "description": "deviceId is an anonymous id stored by the client, 8–80 letters, digits, or hyphens. The server stores only a hash. Responses use code recorded, confirmed, resolved, dismissed, duplicate, too_fast, or daily_cap.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["areaId", "kind", "deviceId"],
+                "properties": {
+                  "areaId": { "type": "string" },
+                  "kind": { "type": "string", "enum": ["off", "on"] },
+                  "deviceId": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Accepted" },
+          "400": { "description": "Invalid body" },
+          "404": { "description": "Unknown area" },
+          "409": { "description": "Duplicate" },
+          "429": { "description": "Rate limited" }
+        }
+      }
+    },
+    "/api/export/hours": {
+      "get": {
+        "summary": "Export hourly observations",
+        "description": "from and to are ISO timestamps. The span cannot exceed 120 days. outage is 1 when a confirmed outage covered at least 30 minutes of that hour.",
+        "parameters": [
+          { "name": "areaId", "in": "query", "schema": { "type": "string" } },
+          { "name": "from", "in": "query", "required": true, "schema": { "type": "string", "format": "date-time" } },
+          { "name": "to", "in": "query", "required": true, "schema": { "type": "string", "format": "date-time" } }
+        ],
+        "responses": {
+          "200": { "description": "Hours" },
+          "400": { "description": "Bad range" }
+        }
+      }
+    },
+    "/api/metrics": {
+      "get": {
+        "summary": "Published model benchmark",
+        "description": "Brier score and AUC for the constant base rate, the recency-weighted hour-of-week baseline, and L2 logistic regression, on a fixed synthetic holdout.",
+        "responses": { "200": { "description": "Metrics" } }
+      }
+    },
+    "/api/openapi": {
+      "get": {
+        "summary": "This document",
+        "responses": { "200": { "description": "OpenAPI JSON" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "barq",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Barq — open-source power outage tracker and predictor",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "demo": "npm run dev -w @barq/web",
+    "dev": "npm run dev -w @barq/web",
+    "bot": "npm run dev -w @barq/bot",
+    "build": "npm run build -w @barq/web",
+    "start": "npm run start -w @barq/web",
+    "lint": "eslint .",
+    "typecheck": "npm run typecheck -w @barq/core && npm run typecheck -w @barq/db && npm run typecheck -w @barq/web && npm run typecheck -w @barq/bot",
+    "test": "vitest run",
+    "eval": "tsx scripts/eval.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "eslint": "^9.36.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.44.0",
+    "vitest": "^3.2.4"
+  }
+}

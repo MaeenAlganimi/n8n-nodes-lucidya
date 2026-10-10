@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  background: #141816;
+}
+
+body {
+  min-height: 100vh;
+}
+
+html[lang='ar'] body {
+  font-family: var(--font-arabic), var(--font-sans), sans-serif;
+}
+
+::selection {
+  background: #e39b2b;
+  color: #141816;
+}
+
+:focus-visible {
+  outline: 2px solid #e39b2b;
+  outline-offset: 2px;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  background: #1c2420;
+  font-family: inherit;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #f4f0e6;
+  color: #141816;
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.leaflet-popup-content {
+  margin: 0.7rem 0.85rem;
+}
+
+.leaflet-bar a {
+  background: #f4f0e6;
+  color: #141816;
+  border-bottom-color: #d9d2c3;
+}
+
+.loading-en,
+.loading-ar {
+  display: none;
+}
+
+html[lang='en'] .loading-en,
+html[lang='ar'] .loading-ar {
+  display: inline;
+}
+
+.map-grid {
+  background-image:
+    linear-gradient(to right, rgba(244, 240, 230, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(244, 240, 230, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

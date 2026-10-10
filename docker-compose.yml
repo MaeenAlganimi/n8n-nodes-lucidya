@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: barq
+      POSTGRES_PASSWORD: barq
+      POSTGRES_DB: barq
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U barq -d barq"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  web:
+    build: .
+    environment:
+      DATABASE_URL: postgres://barq:barq@postgres:5432/barq
+      SEED_SYNTHETIC: "true"
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+  bot:
+    profiles: ["bot"]
+    build: .
+    command: ["npx", "tsx", "apps/bot/src/index.ts"]
+    environment:
+      DATABASE_URL: postgres://barq:barq@postgres:5432/barq
+      SEED_SYNTHETIC: "true"
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

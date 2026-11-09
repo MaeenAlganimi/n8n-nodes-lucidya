@@ -149,6 +149,10 @@ GitHub Actions runs lint, typecheck, test, and build on Node 22. The forecast te
 - A stronger notion of “a different person” than a browser id or a Telegram account.
 - Real contributed history in place of the synthetic seed, still labeled for what it is.
 
+## AI-assisted development
+
+This project was built with AI-assisted development: the code, tests and docs were drafted with an AI assistant and then checked by running the project's tests and build. It has not had an independent security audit, and nothing here is a claim about real users or production traffic.
+
 ## License
 
 [MIT](LICENSE). Copyright 2026 Maeen Alganimi.
